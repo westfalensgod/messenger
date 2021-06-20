@@ -26,6 +26,7 @@ type Props = {
 const LoginScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -35,7 +36,14 @@ const LoginScreen = ({ navigation }: Props) => {
     return unsubscribe;
   }, []);
 
-  const handleSignIn = () => {};
+  const handleLogIn = () => {
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        setLoading(true);
+      })
+      .catch((error) => alert(error.message));
+  };
 
   return (
     <KeyboardAvoidingView
@@ -69,6 +77,7 @@ const LoginScreen = ({ navigation }: Props) => {
           textContentType="password"
           value={password}
           onChangeText={setPassword}
+          onSubmitEditing={handleLogIn}
           secureTextEntry
         />
       </View>
@@ -76,7 +85,7 @@ const LoginScreen = ({ navigation }: Props) => {
         buttonStyle={{ backgroundColor: "#EC6C2B" }}
         containerStyle={styles.button}
         style={{ backgroundColor: "#EC6C2B" }}
-        onPress={handleSignIn}
+        onPress={handleLogIn}
         title="Login"
       />
       <Button
@@ -86,6 +95,9 @@ const LoginScreen = ({ navigation }: Props) => {
         title="Sign Up"
         type="outline"
       />
+      {loading && (
+        <Text style={{ marginTop: 8, marginBottom: 8 }}>Loading...</Text>
+      )}
       <View style={{ height: 100 }} />
     </KeyboardAvoidingView>
   );

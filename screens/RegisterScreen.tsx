@@ -22,6 +22,7 @@ const RegisterScreen = ({ navigation }: Props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -30,12 +31,15 @@ const RegisterScreen = ({ navigation }: Props) => {
   }, [navigation]);
 
   const handleSignUp = () => {
+    setLoading(() => true);
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((authUser) => {
         authUser.user?.updateProfile({
           displayName: name,
         });
+
+        setLoading(() => false);
       })
       .catch((error) => alert(error.message));
   };
@@ -79,6 +83,9 @@ const RegisterScreen = ({ navigation }: Props) => {
         title="Register"
         onPress={handleSignUp}
       />
+      {loading && (
+        <Text style={{ marginTop: 8, marginBottom: 8 }}>Loading...</Text>
+      )}
       <View style={{ height: 100 }} />
     </KeyboardAvoidingView>
   );

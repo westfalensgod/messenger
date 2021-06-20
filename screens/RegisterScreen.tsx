@@ -1,32 +1,33 @@
-import React, { useState } from "react";
-import {
-  Platform,
-  StyleSheet,
-  View,
-  Text,
-  KeyboardAvoidingView,
-} from "react-native";
-import { Button, Input, Image } from "react-native-elements";
+import React, { useLayoutEffect, useState } from "react";
+import { Platform, StyleSheet, View, KeyboardAvoidingView } from "react-native";
+import { Text, Button, Input, Image } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
 
 // types
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 
-type LoginScreenNavigationProp = StackNavigationProp<
+type RegisterScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "Login"
+  "Register"
 >;
 
 type Props = {
-  navigation: LoginScreenNavigationProp;
+  navigation: RegisterScreenNavigationProp;
 };
 
-const LoginScreen = ({ navigation }: Props) => {
+const RegisterScreen = ({ navigation }: Props) => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignIn = () => {};
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackTitle: "Back to Login",
+    });
+  }, [navigation]);
+
+  const handleSignUp = () => {};
 
   return (
     <KeyboardAvoidingView
@@ -34,21 +35,17 @@ const LoginScreen = ({ navigation }: Props) => {
       style={styles.container}
     >
       <StatusBar style="light" />
+      <Text h3 style={{ marginBottom: 48, color: "#35352B" }}>
+        Create an account
+      </Text>
 
-      <Image
-        source={{
-          uri: "https://avatars.githubusercontent.com/u/24266984?v=4",
-        }}
-        style={{
-          width: 200,
-          height: 200,
-          marginTop: 16,
-          marginLeft: "auto",
-          marginBottom: 16,
-          marginRight: "auto",
-        }}
-      />
       <View style={styles.inputContainer}>
+        <Input
+          placeholder="Full name"
+          textContentType="name"
+          value={name}
+          onChangeText={setName}
+        />
         <Input
           placeholder="Email"
           textContentType="emailAddress"
@@ -61,36 +58,30 @@ const LoginScreen = ({ navigation }: Props) => {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          onSubmitEditing={handleSignUp}
         />
       </View>
       <Button
         buttonStyle={{ backgroundColor: "#EC6C2B" }}
         containerStyle={styles.button}
-        style={{ backgroundColor: "#EC6C2B" }}
-        onPress={handleSignIn}
-        title="Login"
-      />
-      <Button
-        titleStyle={{ color: "#EC6C2B" }}
-        containerStyle={styles.button}
-        onPress={() => navigation.navigate("Register")}
-        title="Sign Up"
-        type="outline"
+        raised
+        title="Register"
+        onPress={handleSignUp}
       />
       <View style={{ height: 100 }} />
     </KeyboardAvoidingView>
   );
 };
 
-export default LoginScreen;
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 12,
     backgroundColor: "white",
+    padding: 12,
   },
   inputContainer: {
     width: 300,

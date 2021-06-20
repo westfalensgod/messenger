@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Platform,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Button, Input, Image } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
+import { auth } from "../firebase";
 
 // types
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -25,6 +26,14 @@ type Props = {
 const LoginScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) navigation.replace("Home");
+    });
+
+    return unsubscribe;
+  }, []);
 
   const handleSignIn = () => {};
 

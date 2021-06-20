@@ -3,6 +3,8 @@ import { Platform, StyleSheet, View, KeyboardAvoidingView } from "react-native";
 import { Text, Button, Input, Image } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
 
+import { auth } from "../firebase";
+
 // types
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
@@ -27,7 +29,16 @@ const RegisterScreen = ({ navigation }: Props) => {
     });
   }, [navigation]);
 
-  const handleSignUp = () => {};
+  const handleSignUp = () => {
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((authUser) => {
+        authUser.user?.updateProfile({
+          displayName: name,
+        });
+      })
+      .catch((error) => alert(error.message));
+  };
 
   return (
     <KeyboardAvoidingView

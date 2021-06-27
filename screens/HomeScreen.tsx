@@ -1,5 +1,11 @@
 import React, { useLayoutEffect, useState, useEffect } from "react";
-import { SafeAreaView, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { Avatar } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
@@ -25,14 +31,16 @@ type Doc = {
 
 const HomeScreen = ({ navigation }: Props) => {
   const [chats, setChats] = useState<Doc[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const unsubscribe = db.collection("chats").onSnapshot((snapshot) => {
       const docs = snapshot.docs.map((doc) => ({
         id: doc.id,
         data: doc.data(),
       }));
-
+      setLoading(false);
       setChats(docs);
     });
 
@@ -97,14 +105,18 @@ const HomeScreen = ({ navigation }: Props) => {
   return (
     <SafeAreaView>
       <ScrollView style={styles.container}>
-        {chats.map(({ id, data }) => (
-          <CustomListItem
-            enterChat={handleEnterChat}
-            key={id}
-            id={id}
-            chatName={data.chatName}
-          />
-        ))}
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : (
+          chats.map(({ id, data }) => (
+            <CustomListItem
+              enterChat={handleEnterChat}
+              key={id}
+              id={id}
+              chatName={data.chatName}
+            />
+          ))
+        )}
       </ScrollView>
     </SafeAreaView>
   );

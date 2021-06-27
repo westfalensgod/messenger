@@ -24,7 +24,7 @@ type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
-type Doc = {
+export type Doc = {
   id: string;
   data: firebase.firestore.DocumentData;
 };

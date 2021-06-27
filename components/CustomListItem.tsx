@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ListItem, Avatar } from "react-native-elements";
+import firebase from "firebase";
+
 // import Avatar from "boring-avatars";
+import { db, auth } from "../firebase";
+
+import { Doc } from "../screens/HomeScreen";
 
 type Props = {
   id: string;
@@ -9,7 +14,34 @@ type Props = {
   enterChat: (id: string, chatName: string) => void;
 };
 
+type Message = {
+  timestamp: {
+    [key: string]: number;
+  };
+  text: string;
+  displayName: string;
+  email: string;
+};
+
 const CustomListItem = ({ id, chatName, enterChat }: Props) => {
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = db
+      .collection("chats")
+      .doc(id)
+      .collection("messages")
+      .orderBy("timestamp", "asc")
+      .onSnapshot((snapshot) =>
+        setChatMessages(
+          snapshot.docs.map((doc: firebase.firestore.DocumentData) =>
+            doc.data()
+          )
+        )
+      );
+
+    return unsubscribe;
+  }, []);
   return (
     <ListItem onPress={() => enterChat(id, chatName)} key={id} bottomDivider>
       {/* @TODO: adapt boring avatars library for RN projects */}
@@ -22,7 +54,7 @@ const CustomListItem = ({ id, chatName, enterChat }: Props) => {
           {chatName}
         </ListItem.Title>
         <ListItem.Subtitle numberOfLines={2} ellipsizeMode="tail">
-          test
+          {chatMessages?.[0]?.displayName}: {chatMessages?.[0]?.text}
         </ListItem.Subtitle>
       </ListItem.Content>
     </ListItem>
